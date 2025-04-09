@@ -1,7 +1,7 @@
 import { Type } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TestBed, ComponentFixture, tick } from '@angular/core/testing';
-import { NgMultiSelectDropDownTreeViewModule } from '../src/ng-multiselect-treeview.module';
+import { NgMultiSelectTreeViewModule } from '../src/ng-multiselect-treeview.module';
 
 export function newEvent(eventName: string, bubbles = false, cancelable = false) {
     let evt = document.createEvent('CustomEvent'); // MUST be 'CustomEvent'
@@ -11,7 +11,7 @@ export function newEvent(eventName: string, bubbles = false, cancelable = false)
 
 export function createTestingModule<T>(cmp: Type<T>, template: string): ComponentFixture<T> {
     TestBed.configureTestingModule({
-        imports: [FormsModule, NgMultiSelectDropDownTreeViewModule],
+        imports: [FormsModule, NgMultiSelectTreeViewModule],
         declarations: [cmp]
     })
         .overrideComponent(cmp, {

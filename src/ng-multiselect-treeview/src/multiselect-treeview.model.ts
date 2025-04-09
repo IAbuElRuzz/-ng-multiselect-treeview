@@ -36,7 +36,8 @@ export class ListItem {
       this.id = source.id;
       this.text = source.text;
       this.isDisabled = source.isDisabled;
-      this.children = source.children?.map(child => new ListItem(child));
+      // this.children = source.children?.map(child => new ListItem(child));
+      this.children = source.children || [];
     }
   }
 }

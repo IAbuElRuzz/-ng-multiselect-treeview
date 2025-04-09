@@ -67,7 +67,6 @@ export class MultiSelectTreeViewComponent implements ControlValueAccessor {
       this._settings = Object.assign(this.defaultSettings);
     }
   }
-
   @Input()
   public set data(value: Array<any>) {
     if (!value) {
@@ -76,17 +75,39 @@ export class MultiSelectTreeViewComponent implements ControlValueAccessor {
       const firstItem = value[0];
       this._sourceDataType = typeof firstItem;
       this._sourceDataFields = this.getFields(firstItem);
-      this._data = value.map((item: any) =>
-        typeof item === "string" || typeof item === "number"
-          ? new ListItem(item)
-          : new ListItem({
-              id: item[this._settings.idField],
-              text: item[this._settings.textField],
-              isDisabled: item[this._settings.disabledField]
-            })
-      );
+  
+      this._data = value.map((item: any) => {
+        const newItem = new ListItem({
+          id: item[this._settings.idField],
+          text: item[this._settings.textField],
+          isDisabled: item[this._settings.disabledField]
+        });
+        
+        if (item.children && item.children.length > 0) {
+          newItem.children = this.dataToListItems(item.children); // Recursively handle children
+        }
+  
+        return newItem;
+      });
     }
   }
+
+  // Utility method to map children to ListItems
+private dataToListItems(data: Array<any>): ListItem[] {
+  return data.map((item: any) => {
+    const newItem = new ListItem({
+      id: item[this._settings.idField],
+      text: item[this._settings.textField],
+      isDisabled: item[this._settings.disabledField]
+    });
+
+    if (item.children && item.children.length > 0) {
+      newItem.children = this.dataToListItems(item.children); // Recursively handle children
+    }
+
+    return newItem;
+  });
+}
 
   @Output("onFilterChange")
   onFilterChange: EventEmitter<ListItem> = new EventEmitter<any>();
@@ -121,21 +142,46 @@ export class MultiSelectTreeViewComponent implements ControlValueAccessor {
     if (this.disabled || item.isDisabled) {
       return false;
     }
-
-    const found = this.isSelected(item);
-    const allowAdd = this._settings.limitSelection === -1 || (this._settings.limitSelection > 0 && this.selectedItems.length < this._settings.limitSelection);
-    if (!found) {
+  
+    const isAlreadySelected = this.isSelected(item);
+    const allowAdd = this._settings.limitSelection === -1 || 
+      (this._settings.limitSelection > 0 && this.selectedItems.length < this._settings.limitSelection);
+  
+    if (!isAlreadySelected) {
       if (allowAdd) {
-        this.addSelected(item);
+        this.selectItemAndChildren(item);
       }
     } else {
-      this.removeSelected(item);
+      this.deselectItemAndChildren(item);
     }
+  
     if (this._settings.singleSelection && this._settings.closeDropDownOnSelection) {
       this.closeDropdown();
     }
   }
-
+  selectItemAndChildren(item: ListItem) {
+    if (!this.isSelected(item) && !item.isDisabled) {
+      this.selectedItems.push(item);
+      this.onSelect.emit(this.emittedValue(item));
+    }
+  
+    if (item.children && item.children.length) {
+      item.children.forEach(child => this.selectItemAndChildren(child));
+    }
+  
+    this.onChangeCallback(this.emittedValue(this.selectedItems));
+  }
+  
+  deselectItemAndChildren(item: ListItem) {
+    this.selectedItems = this.selectedItems.filter(selected => selected.id !== item.id);
+    this.onDeSelect.emit(this.emittedValue(item));
+  
+    if (item.children && item.children.length) {
+      item.children.forEach(child => this.deselectItemAndChildren(child));
+    }
+  
+    this.onChangeCallback(this.emittedValue(this.selectedItems));
+  }
   writeValue(value: any) {
     if (value !== undefined && value !== null && value.length > 0) {
       if (this._settings.singleSelection) {
@@ -313,20 +359,28 @@ export class MultiSelectTreeViewComponent implements ControlValueAccessor {
     }
     this.onDropDownClose.emit();
   }
-
+  flattenData(items: ListItem[]): ListItem[] {
+    return items.reduce((acc, item) => {
+      acc.push(item);
+      if (item.children?.length) {
+        acc = acc.concat(this.flattenData(item.children));
+      }
+      return acc;
+    }, []);
+  }
   toggleSelectAll() {
     if (this.disabled) {
       return false;
     }
+  
     if (!this.isAllItemsSelected()) {
-      // filter out disabled item first before slicing
-      this.selectedItems = this.listFilterPipe.transform(this._data,this.filter).filter(item => !item.isDisabled).slice();
+      const allItems = this.flattenData(this.listFilterPipe.transform(this._data, this.filter));
+      this.selectedItems = allItems.filter(item => !item.isDisabled).slice();
       this.onSelectAll.emit(this.emittedValue(this.selectedItems));
     } else {
       this.selectedItems = [];
-      this.onDeSelectAll.emit(this.emittedValue(this.selectedItems));
+      this.onDeSelectAll.emit([]);
     }
-    this.onChangeCallback(this.emittedValue(this.selectedItems));
   }
 
   getFields(inputData) {

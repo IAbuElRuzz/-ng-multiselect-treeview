@@ -236,6 +236,86 @@ li.has-children > div {
   font-weight: bold;
   cursor: pointer;
 }
+
+
+/* Add some style for the tree view component */
+.multiselect-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-btn {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-height: 197px;
+  overflow-y: auto;
+}
+
+.filter-textbox input {
+  width: 100%;
+  padding: 5px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.nested-list {
+  margin-left: 20px;
+}
+
+.multiselect-item-checkbox {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.multiselect-item-checkbox .has-children {
+  font-weight: bold;
+}
+
+.multiselect-item-checkbox input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.selected-item-container {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #eee;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.selected-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.no-filtered-data, .no-data {
+  text-align: center;
+  padding: 10px;
+}
+
+.no-filtered-data h5, .no-data h5 {
+  margin: 0;
+  color: #888;
+}
+
+
+
+
 @keyframes borderscale {
   50% {
     box-shadow: 0 0 0 2px $base-color;

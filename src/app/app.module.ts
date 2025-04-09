@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
-import { NgMultiSelectDropDownTreeViewModule } from '../ng-multiselect-treeview/src/ng-multiselect-treeview.module';
+import { NgMultiSelectTreeViewModule } from '../ng-multiselect-treeview/src/ng-multiselect-treeview.module';
  
 
 import { SelectSectionComponent } from './components/select-section';
@@ -23,7 +23,7 @@ import { AppComponent } from './app.component';
     BrowserModule,
     TabsModule.forRoot(),
     ButtonsModule.forRoot(),
-    NgMultiSelectDropDownTreeViewModule.forRoot(),
+    NgMultiSelectTreeViewModule.forRoot(),
     ShCodeViewer
   ],
   providers: [],
