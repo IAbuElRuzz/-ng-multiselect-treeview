@@ -1,0 +1,16 @@
+{
+  "projectName": "ng-multiselect-treeview",
+  "projectOwner": "Ibrahim Abu El Ruzz",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "angular",
+  "contributors": [
+    
+  ],
+  "contributorsPerLine": 7
+}
